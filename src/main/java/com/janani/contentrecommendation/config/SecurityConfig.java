@@ -5,6 +5,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -26,12 +27,13 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("contents/uploads/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")      // only admin
                         .requestMatchers("/curator/**").hasRole("CURATOR")  // only curator
                         .requestMatchers("/users/**").hasAnyRole("USER","ADMIN","CURATOR")
                         .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults())
+                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -47,3 +49,16 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 }
+
+
+
+/*
+
+Intercepts login requests (by default at /login).
+
+Extracts the username and password from the request.
+
+Passes them to the AuthenticationManager.
+
+If authentication succeeds, it creates an Authentication object and stores it in the SecurityContext.
+*/

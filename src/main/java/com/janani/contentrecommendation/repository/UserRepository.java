@@ -15,4 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // Check if email already exists (used in registration validation)
     boolean existsByEmail(String email);
+
+    // Custom method for content module: find user by userId
+    Optional<User> findById(Long userId);
 }

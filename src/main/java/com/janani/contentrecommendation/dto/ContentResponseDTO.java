@@ -1,14 +1,28 @@
 package com.janani.contentrecommendation.dto;
 
-import java.time.LocalDateTime;
+import com.janani.contentrecommendation.entity.Content;
+import lombok.Data;
 
+import java.time.LocalDateTime;
+@Data
 public class ContentResponseDTO {
     private Long id;
     private String title;
-    private String body;
-    private String authorEmail;
-    private String type;
-    private boolean published;
-    private LocalDateTime createdAt; private LocalDateTime updatedAt;
-    //have to add getter and setter methods
+    private String category;
+    private String url;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private Long userId;
+
+    public ContentResponseDTO(Content content) {
+        this.id = content.getId();
+        this.title = content.getTitle();
+        this.category = content.getCategory();
+        this.url = content.getUrl();
+        this.createdAt = content.getCreatedAt();
+        this.updatedAt = content.getUpdatedAt();
+        this.userId = content.getUser().getUserId();
+    }
+
+
 }

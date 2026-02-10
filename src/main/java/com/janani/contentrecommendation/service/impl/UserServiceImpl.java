@@ -1,4 +1,5 @@
 package com.janani.contentrecommendation.service.impl;
+
 import com.janani.contentrecommendation.dto.PreferenceRequest;
 import com.janani.contentrecommendation.dto.UserResponse;
 import com.janani.contentrecommendation.entity.Role;
@@ -20,14 +21,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
         return UserResponse.fromEntity(user);
     }
 
     @Override
     public UserResponse updatePreferences(Long id, PreferenceRequest request) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
         user.setPreferredCategories(request.getCategories());
         user.setPreferredTags(request.getTags());
         userRepository.save(user);
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse becomeCurator(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
         user.setRole(Role.CURATOR); // user decides to opt-in
         userRepository.save(user);
         return UserResponse.fromEntity(user);

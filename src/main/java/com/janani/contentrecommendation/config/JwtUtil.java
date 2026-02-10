@@ -5,34 +5,41 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
-
 import java.security.Key;
 import java.util.*;
 
+/*
+This class is a utility helper for Jwt Operations
+ */
+//@Component Tells the spring to treat this class a Bean  so It can be injected anywhere it needed by using @Autowired
 @Component
 public class JwtUtil {
 
     private final Key key;
+    //Secret key used to sign and validate JWT
     private final long expiration;
-
+    //Token expiry time (in milliseconds)
+    //Comes from application.properties
+    //@Value("${jwt.secret}"),@Value("${jwt.expiration}")  read values from application.properties
     public JwtUtil(@Value("${jwt.secret}") String secret,
                    @Value("${jwt.expiration}") long expiration) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());//Converts the secret string into cryptographic key
         this.expiration = expiration;
     }
 
-    // Generate JWT with role claim
+    // Generate JWT token with role claim
+    //This method creates and returns JWT Token
     public String generateToken(String email, String role) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", role);
-
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(email)
+        claims.put("role", role);//adding a custom claim in jwt token
+        // A claim is piece of info stored in the payload.
+        return Jwts.builder()//Used to build the builder pattern
+                .setClaims(claims)//adds role claim.
+                .setSubject(email)//sets username/email as subject.
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
+                .signWith(key, SignatureAlgorithm.HS256)//Creates the signature part of the token
+                .compact();// Converts header,payload,signature into jwt string
     }
 
     //  Extract username (subject)
