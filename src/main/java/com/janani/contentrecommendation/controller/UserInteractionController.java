@@ -1,14 +1,13 @@
 package com.janani.contentrecommendation.controller;
-import com.janani.contentrecommendation.entity.Content;
+
 import com.janani.contentrecommendation.entity.InteractionType;
-import com.janani.contentrecommendation.entity.User;
 import com.janani.contentrecommendation.entity.UserInteraction;
 import com.janani.contentrecommendation.service.UserInteractionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/interactions")
@@ -16,78 +15,50 @@ public class UserInteractionController {
 
     private final UserInteractionService service;
 
-    @Autowired
     public UserInteractionController(UserInteractionService service) {
         this.service = service;
     }
 
-    // --- USER Endpoints ---
     @PostMapping("/{contentId}/like")
-    public ResponseEntity<UserInteraction> likeContent(@PathVariable Long contentId,
-                                                       @RequestParam Long userId) {
-        User user = new User(userId);       // assuming constructor with id
-        Content content = new Content(contentId); // assuming constructor with id
-        return ResponseEntity.ok(
-                service.logInteraction(user, content, InteractionType.LIKE, null)
-        );
+    public ResponseEntity<String> likeContent(@PathVariable Long contentId,
+                                              @RequestParam Long userId) {
+        service.recordInteraction(userId, contentId, InteractionType.LIKE);
+        return ResponseEntity.ok("Like recorded successfully");
     }
 
     @PostMapping("/{contentId}/view")
-    public ResponseEntity<UserInteraction> viewContent(@PathVariable Long contentId,
-                                                       @RequestParam Long userId) {
-        User user = new User(userId);
-        Content content = new Content(contentId);
-        return ResponseEntity.ok(
-                service.logInteraction(user, content, InteractionType.VIEW, null)
-        );
+    public ResponseEntity<String> viewContent(@PathVariable Long contentId,
+                                              @RequestParam Long userId) {
+        service.recordInteraction(userId, contentId, InteractionType.VIEW);
+        return ResponseEntity.ok("View recorded successfully");
     }
 
     @PostMapping("/{contentId}/bookmark")
-    public ResponseEntity<UserInteraction> bookmarkContent(@PathVariable Long contentId,
-                                                           @RequestParam Long userId) {
-        User user = new User(userId);
-        Content content = new Content(contentId);
-        return ResponseEntity.ok(
-                service.logInteraction(user, content, InteractionType.BOOKMARK, null)
-        );
+    public ResponseEntity<String> bookmarkContent(@PathVariable Long contentId,
+                                                  @RequestParam Long userId) {
+        service.recordInteraction(userId, contentId, InteractionType.BOOKMARK);
+        return ResponseEntity.ok("Bookmark recorded successfully");
     }
 
     @PostMapping("/{contentId}/share")
-    public ResponseEntity<UserInteraction> shareContent(@PathVariable Long contentId,
-                                                        @RequestParam Long userId,
-                                                        @RequestParam String platform) {
-        User user = new User(userId);
-        Content content = new Content(contentId);
-        return ResponseEntity.ok(
-                service.logInteraction(user, content, InteractionType.SHARE, platform)
-        );
+    public ResponseEntity<String> shareContent(@PathVariable Long contentId,
+                                               @RequestParam Long userId,
+                                               @RequestParam Long sharedUserId) {
+        service.recordShare(userId, contentId, sharedUserId);
+        return ResponseEntity.ok("Share recorded successfully");
     }
 
-    // --- USER Activity History ---
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<UserInteraction>> getUserInteractions(@PathVariable Long userId) {
-        return ResponseEntity.ok(service.getInteractionsByUser(userId));
-    }
 
-    // --- CURATOR Analytics ---
-    @GetMapping("/curator/{curatorId}")
-    public ResponseEntity<List<UserInteraction>> getCuratorInteractions(@PathVariable Long curatorId) {
-        return ResponseEntity.ok(service.getInteractionsByCurator(curatorId));
-    }
-
-    // --- ADMIN Monitoring ---
-    @GetMapping("/admin/all")
-    public ResponseEntity<List<UserInteraction>> getAllInteractions() {
-        return ResponseEntity.ok(service.getAllInteractions());
-    }
-
-    @GetMapping("/admin/filter")
-    public ResponseEntity<List<UserInteraction>> filterInteractions(@RequestParam(required = false) Long userId,
-                                                                    @RequestParam(required = false) Long curatorId,
-                                                                    @RequestParam(required = false) Long contentId,
-                                                                    @RequestParam(required = false) InteractionType type) {
-        // For simplicity, you can implement filtering logic in service layer
-        // Example: service.filterInteractions(userId, curatorId, contentId, type)
-        return ResponseEntity.ok(service.getAllInteractions()); // placeholder
+    @GetMapping("/activity")
+    public ResponseEntity<?> getUserActivity(@RequestParam Long userId,
+                                             @RequestParam(required = false) String type) {
+        if (type != null) {
+            InteractionType interactionType = InteractionType.valueOf(type.toUpperCase());
+            List<UserInteraction> filtered = service.getUserActivityByType(userId, interactionType);
+            return ResponseEntity.ok(filtered);
+        } else {
+            Map<String, List<UserInteraction>> grouped = service.getGroupedUserActivity(userId);
+            return ResponseEntity.ok(grouped);
+        }
     }
 }

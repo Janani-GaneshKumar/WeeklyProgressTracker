@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +21,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(InteractionNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleUserNotFound(InteractionNotFoundException ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("timestamp", LocalDateTime.now());
+        error.put("status", HttpStatus.NOT_FOUND.value());
+        error.put("error", "User Not Found");
+        error.put("message", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<Map<String, Object>> handleInvalidCredentials(InvalidCredentialsException ex) {
         Map<String, Object> error = new HashMap<>();
@@ -31,7 +40,14 @@ public class GlobalExceptionHandler {
         error.put("message", ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
-
+    @ExceptionHandler(InvalidInteractipnTypeException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidInteractionType(InvalidInteractipnTypeException ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("timestamp", LocalDateTime.now());
+        error.put("status", HttpStatus.BAD_REQUEST.value());
+        error.put("error", "Invalid Interaction Type");
+        error.put("message", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST); }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
         Map<String, Object> error = new HashMap<>();

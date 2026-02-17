@@ -1,18 +1,17 @@
 package com.janani.contentrecommendation.service;
 
-import com.janani.contentrecommendation.entity.Content;
 import com.janani.contentrecommendation.entity.InteractionType;
-import com.janani.contentrecommendation.entity.User;
 import com.janani.contentrecommendation.entity.UserInteraction;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserInteractionService {
-        UserInteraction logInteraction(User user, Content content, InteractionType type, String sharePlatform);
-        List<UserInteraction> getInteractionsByUser(Long userId);
-        List<UserInteraction> getInteractionsByContent(Long contentId);
-        List<UserInteraction> getInteractionsByCurator(Long curatorId);
-        List<UserInteraction> getAllInteractions(); // for admin
+        void recordInteraction(Long userId, Long contentId, InteractionType type);
+        void recordShare(Long userId, Long contentId, Long sharedUserId);
+        List<UserInteraction> getUserActivity(Long userId);
+        List<UserInteraction> getUserActivityByType(Long userId, InteractionType type);
+        Map<String, List<UserInteraction>> getGroupedUserActivity(Long userId);
 
 
 }

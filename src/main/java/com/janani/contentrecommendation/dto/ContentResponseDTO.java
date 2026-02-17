@@ -21,7 +21,7 @@ public class ContentResponseDTO {
         this.url = content.getUrl();
         this.createdAt = content.getCreatedAt();
         this.updatedAt = content.getUpdatedAt();
-        this.userId = content.getUser().getUserId();
+        this.userId = content.getCurator().getUserId();
     }
 
 

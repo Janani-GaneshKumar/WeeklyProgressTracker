@@ -1,9 +1,11 @@
 package com.janani.contentrecommendation.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 @Data
 @Entity
 @Table(name = "contents")
@@ -31,7 +33,7 @@ public class Content {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User curator;
 
     public Content() {}
 
@@ -39,7 +41,7 @@ public class Content {
         this.title = title;
         this.category = category;
         this.url = url;
-        this.user = user;
+        this.curator = user;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -55,5 +57,4 @@ public class Content {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // Getters & Setters omitted for brevity
 }
