@@ -1,8 +1,10 @@
 package com.janani.contentrecommendation.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 @Entity //Marks the class as JPA Entity
 @Table(name = "users")//explicitly specifies the table name
 public class User {
@@ -16,7 +18,7 @@ public class User {
 
     @Column(unique = true, nullable = false)//It mention that this column should be unique and not null
     private String email;
-
+    @JsonIgnore
     @Column(nullable = false)
     private String passwordHash;
 
@@ -72,4 +74,6 @@ public class User {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+
 }

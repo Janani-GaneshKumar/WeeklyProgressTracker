@@ -1,9 +1,7 @@
 package com.janani.contentrecommendation.service.impl;
-
 import com.janani.contentrecommendation.dto.LoginRequest;
 import com.janani.contentrecommendation.dto.RegisterRequest;
 import com.janani.contentrecommendation.dto.UserResponse;
-import com.janani.contentrecommendation.entity.Role;
 import com.janani.contentrecommendation.entity.User;
 import com.janani.contentrecommendation.exception.InvalidCredentialsException;
 import com.janani.contentrecommendation.exception.UserNotFoundException;
@@ -28,9 +26,7 @@ public class AuthServiceImpl implements AuthService {
         this.jwtUtil = jwtUtil;
     }
 
-    /**
-     * Register a new user with chosen role
-     */
+
     @Override
     //RegisterRequest request - Dto object is passed as the parameter
     public UserResponse register(RegisterRequest request) {

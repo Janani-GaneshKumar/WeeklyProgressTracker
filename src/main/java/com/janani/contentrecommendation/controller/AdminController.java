@@ -24,9 +24,9 @@ public class AdminController {
     @GetMapping("/all-users")
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         List<UserResponse> users = userRepository.findAll()
-                .stream()
-                .map(UserResponse::fromEntity)
-                .toList();
+                .stream()//Converts the list of User entities into a stream for processing.
+                .map(UserResponse::fromEntity)// For each User entity, call the static method fromEntity() to convert it into a UserResponse DTO.
+                .toList();//Collects the mapped results back into a List<UserResponse>
         return ResponseEntity.ok(users);
     }
 
